@@ -2,6 +2,7 @@ package com.vedianbunka.lab_week_05
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +47,14 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private val imageResultView : ImageView by lazy {
+        findViewById<ImageView>(R.id.image_result)
+    }
+
+    private val imageLoader: ImageLoader by lazy {
+        GlideLoader(this)
+    }
+
     private fun getCatImageResponse() {
         val call = catApiService.searchImages(
             1,
@@ -64,7 +73,12 @@ class MainActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     val image = response.body()
-                    val firstImage = image?.firstOrNull()?.imageUrl ?: "No URL"
+                    val firstImage = image?.firstOrNull()?.imageUrl.orEmpty()
+                    if(firstImage.isNotBlank()){
+                        imageLoader.loadImage(firstImage, imageResultView)
+                    } else {
+                        Log.d(MAIN_ACTIVITY, "Missing Image URL")
+                    }
                     apiResponseView.text = getString(R.string.image_placeholder,
                         firstImage)
                 } else {
