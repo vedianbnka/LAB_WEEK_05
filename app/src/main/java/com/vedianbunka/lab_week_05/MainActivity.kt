@@ -74,13 +74,15 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val image = response.body()
                     val firstImage = image?.firstOrNull()?.imageUrl.orEmpty()
+                    val breed = image?.firstOrNull()?.breeds?.firstOrNull()?.name ?: "unknown"
                     if(firstImage.isNotBlank()){
                         imageLoader.loadImage(firstImage, imageResultView)
                     } else {
                         Log.d(MAIN_ACTIVITY, "Missing Image URL")
                     }
+                    Log.d("DEBUG", "Image data: $image")
                     apiResponseView.text = getString(R.string.image_placeholder,
-                        firstImage)
+                        firstImage) + "\n" + getString(R.string.breed_placeholder, breed)
                 } else {
                     Log.e(
                         MAIN_ACTIVITY,
@@ -94,5 +96,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val MAIN_ACTIVITY = "MAIN_ACTIVITY"
+        const val DEBUG = "DEBUG"
     }
 }
